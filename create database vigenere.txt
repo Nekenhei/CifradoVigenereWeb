@@ -1,0 +1,81 @@
+create database n260m_19614271_vigenere;
+
+use n260m_19614271_vigenere;
+
+drop table if exists usuarios;
+
+create table usuarios (
+usu_cod int auto_increment primary key,
+usu_name varchar(100) ,
+usu_mail varchar(30)
+);
+
+Describe usuarios;
+
+drop table if exists tipo_proceso;
+
+create table tipo_proceso (
+tipo_cod int primary key,
+proceso varchar(14)
+);
+
+Describe tipo_proceso;
+
+Drop table if exists procesos;
+
+Create table procesos(
+proc_cod int auto_increment primary key,
+proc_entrada longtext,
+proc_clave tinytext,
+proc_salida longtext,
+proc_tipo_cod int not null,
+FOREIGN KEY (proc_tipo_cod) REFERENCES tipo_proceso(tipo_cod)
+);
+ 
+describe procesos;
+
+drop table if exists transacciones;
+
+create table transacciones (
+tran_cod int auto_increment primary key,
+tran_proc_cod int not null,
+tran_usu_cod int not null,
+tran_fecha date not null,
+FOREIGN KEY (tran_proc_cod) REFERENCES procesos(proc_cod),
+FOREIGN KEY (tran_usu_cod) REFERENCES usuarios(usu_cod)
+);
+
+Describe transacciones;
+
+insert into tipo_proceso(tipo_cod, proceso) values (1, 'codificacion');
+insert into tipo_proceso(tipo_cod, proceso) values (2, 'decodificacion');
+
+select * from tipo_proceso;
+
+insert into usuarios(usu_name, usu_mail) values ('test','test');
+
+select * from usuarios;
+
+insert into procesos(proc_entrada,proc_clave,proc_salida,proc_tipo_cod) values ('test cod','test cod','test cod',1);
+
+insert into procesos(proc_entrada,proc_clave,proc_salida,proc_tipo_cod) values ('test dec','test dec','test dec',2);
+
+select * from procesos;
+
+select proc_cod, proc_entrada, proc_clave, proc_salida, proceso from procesos p inner join tipo_proceso t on p.proc_tipo_cod = t.tipo_cod ORDER BY proc_cod;
+
+insert into transacciones(tran_proc_cod, tran_usu_cod, tran_fecha) values (1,1,'2017-05-22');
+
+insert into transacciones(tran_proc_cod, tran_usu_cod, tran_fecha) values (2,1,'2017-05-22');
+
+select * from transacciones;
+
+
+select tran_cod, tran_usu_cod, tran_fecha, proc_entrada, proc_clave, proc_salida, proc_tipo_cod from transacciones t inner join procesos p on t.tran_proc_cod = p.proc_cod order by tran_cod;
+
+select tran_cod, usu_name, usu_mail, tran_fecha, proc_entrada, proc_clave, proc_salida, proceso from transacciones t inner join procesos p on t.tran_proc_cod = p.proc_cod inner join usuarios u on t.tran_usu_cod = u.usu_cod inner join tipo_proceso tp on p.proc_tipo_cod = tp.tipo_cod ORDER BY tran_cod;
+
+SELECT MAX( proc_cod ) AS Codigo_Proceso FROM procesos // extraer codigo maximo
+
+
+
